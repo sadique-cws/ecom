@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+{% load static %}
+{% load cart_template_tags %}
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+     <title>{% block head_title %}{% endblock %}</title>
+    {% block extra_head %} {% endblock %}
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.11.2/css/all.css">
+  <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'css/mdb.min.css'%}" rel="stylesheet">
+  <link href="{% static 'css/style.min.css' %}" rel="stylesheet">
+  <style type="text/css">
+    html,
+    body,
+    header,
+    .carousel {
+      height: 60vh;
+    }
+
+    @media (max-width: 740px) {
+
+      html,
+      body,
+      header,
+      .carousel {
+        height: 100vh;
+      }
+    }
+
+    @media (min-width: 800px) and (max-width: 850px) {
+
+      html,
+      body,
+      header,
+      .carousel {
+        height: 100vh;
+      }
+    }
+
+  </style>
+</head>
+
+<body>
+     <nav class="navbar fixed-top navbar-expand-lg navbar-light white scrolling-navbar">
+    <div class="container">
+        <a class="navbar-brand waves-effect" href="{% url 'core:homepage' %}">
+        <strong class="blue-text">Dj Shop</strong>
+        </a>
+
+<ul class="navbar-nav nav-flex-icons mr-auto">
+    <li class="nav-item"><a href="" class="nav-link"></a></li>
+  </ul>
+     <form class="form-inline mx-auto">
+          <div class="md-form my-0">
+            <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
+          </div>
+        </form>
+
+
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+
+
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+
+       <ul class="navbar-nav nav-flex-icons ml-auto">
+            {% if request.user.is_authenticated %}
+
+          <li class="nav-item">
+            <a class="nav-link waves-effect" href="{% url 'core:order-summary' %}">
+              <span class="badge red z-depth-1 mr-1"> {{ request.user|cart_item_count }} </span>
+              <i class="fas fa-shopping-cart"></i>
+              <span class="clearfix d-none d-sm-inline-block"> Cart </span>
+            </a>
+          </li>
+                <li class="nav-item">
+            <a class="nav-link waves-effect" href="{% url 'account_logout' %}">
+              <span class="clearfix d-none d-sm-inline-block"> Logout </span>
+            </a>
+          </li>
+            {% else %}
+          <li class="nav-item">
+            <a class="nav-link waves-effect" href="{% url 'account_login' %}">
+              <span class="clearfix d-none d-sm-inline-block"> Login </span>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link waves-effect" href="{% url 'account_signup' %}">
+              <span class="clearfix d-none d-sm-inline-block"> Signup </span>
+            </a>
+          </li>
+            {% endif %}
+        </ul>
+
+      </div>
+
+    </div>
+  </nav>
+
+   <div class="pt-5"> {% if messages %}
+          {% for message in messages %}
+               <div class="alert mt-5 alert-{{ message.tags }} alert-dismissible fade show">
+                    {{ message }}
+
+               <button type="button" class="close" data-dismiss="alert">
+                   <span>&times;</span>
+               </button>
+               </div>
+            {% endfor %}
+    {% endif %}
+   </div>
+
+ {% block content  %}{% endblock content %}
+{% block extra_body %}{% endblock %}
+
+
+
+    {% include "footer.html" %}
+    {% include "scripts.html" %}
+
+
+ {% block extra_scripts %}{% endblock extra_scripts %}
+
+</body>
+
+</html>

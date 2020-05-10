@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+{% load cart_template_tags %}
+{% block content %}
+
+  <main class="mt-5 pt-4">
+    <div class="container dark-grey-text mt-5">
+
+      <div class="row wow fadeIn">
+        <div class="col-md-6 mb-4">
+          <img src="{{ object.image.url }}" class="img-fluid" alt="">
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="p-4">
+
+            <div class="mb-3">
+              <a href="">
+                <span class="badge purple mr-1">{{ object.get_category_display }}</span>
+              </a>
+            </div>
+
+            <p class="lead">
+
+
+                  {% if item.discount_price %}
+                      <span class="mr-1">
+                        <del>{{ object.price }}</del>
+                      </span>
+                      <span>{{ object.discount_price }}</span>
+                  {% else %}
+                      <span>{{ object.price }}</span>
+                  {% endif %}
+            </p>
+
+            <p class="lead font-weight-bold">Description</p>
+
+            <p>{{ object.description }}</p>
+
+
+
+
+            {% if request.user|Item_Is_Exit:request.resolver_match.kwargs.slug %}
+                <a href="{% url 'core:order-summary' %}" class="btn btn-success btn-md my-0 p">View cart
+                    <i class="fas fa-arrow-circle-right ml-1"></i>
+                  </a>
+                  <a href="{{ object.get_remove_from_cart_url }}" class="btn btn-danger btn-md my-0 p">Remove from cart
+                    <i class="fas fa-shopping-cart ml-1"></i>
+                  </a>
+                {% else %}
+                <a href="{{ object.get_add_to_cart_url }}" class="btn btn-primary btn-md my-0 p">Add to cart
+                <i class="fas fa-shopping-cart ml-1"></i>
+              </a>
+            {% endif %}
+            </div>
+        </div>
+      </div>
+      <hr>
+
+      <div class="row d-flex justify-content-center wow fadeIn">
+
+        <div class="col-md-6 text-center">
+
+          <h4 class="my-4 h4">Additional information</h4>
+
+          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Natus suscipit modi sapiente illo soluta odit
+            voluptates,
+            quibusdam officia. Neque quibusdam quas a quis porro? Molestias illo neque eum in laborum.</p>
+        </div>
+      </div>
+
+    <div class="row">
+         <div class="col-lg-12 "> <h4 class="my-4 h4 text-center">Related Products</h4></div>
+    </div>
+
+      <div class="row wow fadeIn">
+
+            {% for item in item %}
+          <div class="col-lg-3 col-md-6 mb-4">
+
+              <div class="card">
+              <div class="view overlay">
+                <img src="{{ item.image.url }}" class="card-img-top" alt="{{ item.title }}-image" height="200px">
+                <a href="{{ item.get_absolute_url }}">
+                  <div class="mask rgba-white-slight"></div>
+                </a>
+              </div>
+
+              <div class="card-body text-center">
+                <a href="" class="grey-text">
+                  <h5>{{ item.get_category_display }}</h5>
+                </a>
+                <h5>
+                  <strong>
+                    <a href="{{ item.get_absolute_url }}" class="dark-grey-text">{{ item.title }}</a>
+                  </strong>
+                </h5>
+
+                <h4 class="font-weight-bold blue-text">
+                  <strong>
+                      {% if item.discount_price %}
+                      <span class="mr-1">
+                        ₹<del>{{ item.price }}</del>
+                      </span>
+                      ₹<span>{{ item.discount_price }}</span>
+                  {% else %}
+                      ₹<span>{{ item.price }}</span>
+                  {% endif %}
+                  </strong>
+                </h4>
+
+              </div>
+            </div>
+          </div>
+            {% endfor %}
+
+
+        </div>
+
+    </div>
+  </main>
+
+{% endblock %}
