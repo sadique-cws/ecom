@@ -23,25 +23,38 @@
 
       <tr>
       <th>{{ forloop.counter }}</th>
-        <th scope="row">{{ order_item.item.title }}</th>
-        <td>{{ order_item.item.price }}</td>
+        <th scope="row">{{ order_item.item.title }}
+        {% if order_item.item_variations.exists %}
+             ( {% for foo in order_item.item_variations.all %}
+                  <small class="text-muted">{{ foo.variation.name }}: {{ foo.value }}</small>
+              {% endfor %}
+            )
+
+        {% endif %}
+        </th>
+        <td> {% if order_item.item.discount_price %}
+                ₹<del class="text-muted">{{ order_item.item.price }}</del>
+            <p class="text-dark font-weight-bold d-inline ml-1">₹{{ order_item.item.discount_price }}</p>
+        {% else %}
+            <p class="text-dark font-weight-bold">₹{{ order_item.item.price }}</p>
+        {% endif %}</td>
         <td>
-            <a href="{% url 'core:remove-single-item-from-cart' order_item.item.slug %}" class="badge badge-danger">
+            <a href="{% url 'core:remove-single-item-from-cart' order_item.item.slug %}" class="badge badge-danger p-2">
                  <i class="fas fa-minus"></i>
             </a>
             {{ order_item.qty }}
-            <a href="{% url 'core:add-to-cart' order_item.item.slug %}" class="badge badge-success">
+            <a href="{% url 'core:add-to-cart' order_item.item.slug %}" class="badge badge-success p-2">
             <i class="fas fa-plus"></i>
             </a>
         </td>
         <td>
             {% if order_item.item.discount_price %}
-                    {{ order_item.get_total_discount_price }}
-                <span class="badge badge-success">Saving Rs.{{ order_item.get_amount_saved }}</span>
+                    ₹{{ order_item.get_total_discount_price }}
+                <span class="badge badge-success">Saving ₹{{ order_item.get_amount_saved }}</span>
             {% else %}
-                    {{ order_item.get_total_price }}
+                    ₹{{ order_item.get_total_price }}
             {% endif %}
-         <a href="{% url 'core:remove-from-cart' order_item.item.slug %}" class="badge badge-danger float-right"><i class="fas fa-trash"></i></a>
+         <a href="{% url 'core:remove-from-cart' order_item.item.slug %}" class="badge badge-danger p-2 float-right"><i class="fas fa-trash"></i></a>
         </td>
 
       </tr>
@@ -64,8 +77,8 @@
 
 
     <tr>
-        <th colspan="4">Order Total</th>
-        <th>{{ object.get_total }}</th>
+        <th colspan="4" class="font-weight-bold">Order Total</th>
+        <th class="lead font-weight-bold">₹{{ object.get_total }}</th>
     </tr>
     <tr>
         <td colspan="5">

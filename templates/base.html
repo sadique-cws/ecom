@@ -22,6 +22,11 @@
       height: 60vh;
     }
 
+    .card-img-design{
+   width: 100%!important;
+   height: 220px!important;
+   object-fit: contain;
+}
     @media (max-width: 740px) {
 
       html,
@@ -45,7 +50,7 @@
   </style>
 </head>
 
-<body>
+<body class="grey lighten-5">
      <nav class="navbar fixed-top navbar-expand-lg navbar-light white scrolling-navbar">
     <div class="container">
         <a class="navbar-brand waves-effect" href="{% url 'core:homepage' %}">
@@ -55,12 +60,14 @@
 <ul class="navbar-nav nav-flex-icons mr-auto">
     <li class="nav-item"><a href="" class="nav-link"></a></li>
   </ul>
-     <form class="form-inline mx-auto">
-          <div class="md-form my-0">
-            <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
-          </div>
+     <form class="form-inline">
+         <div class="input-group my-0">
+  <input type="text" class="form-control" type="text" placeholder="Search" aria-label="Search" size="60">
+  <div class="input-group-append">
+    <button class="btn btn-md btn-default m-0 px-3 py-2 z-depth-0 waves-effect" type="button" id="button-addon2"><i class="fas fa-search"></i></button>
+  </div>
+</div>
         </form>
-
 
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
         aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -74,18 +81,27 @@
        <ul class="navbar-nav nav-flex-icons ml-auto">
             {% if request.user.is_authenticated %}
 
-          <li class="nav-item">
+          <li class="nav-item border border-light rounded mr-3">
             <a class="nav-link waves-effect" href="{% url 'core:order-summary' %}">
-              <span class="badge red z-depth-1 mr-1"> {{ request.user|cart_item_count }} </span>
+              <span class="badge red z-depth-1"> {{ request.user|cart_item_count }} </span>
               <i class="fas fa-shopping-cart"></i>
               <span class="clearfix d-none d-sm-inline-block"> Cart </span>
             </a>
           </li>
-                <li class="nav-item">
-            <a class="nav-link waves-effect" href="{% url 'account_logout' %}">
-              <span class="clearfix d-none d-sm-inline-block"> Logout </span>
-            </a>
-          </li>
+
+                <li class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle waves-effect mr-4 text-capitalize" data-toggle="dropdown"
+  aria-haspopup="true" aria-expanded="false">{{ request.user.username }}</a>
+
+<div class="dropdown-menu">
+  <a class="dropdown-item py-1" href="#">My Profile</a>
+  <a class="dropdown-item py-1" href="#">My Order</a>
+  <a class="dropdown-item py-1" href="#">Setting</a>
+  <div class="dropdown-divider"></div>
+   <a class="dropdown-item py-1 my-0" href="{% url 'account_logout' %}"><span class="clearfix d-none d-sm-inline-block"> Logout </span></a>
+</div>
+            </li>
+
             {% else %}
           <li class="nav-item">
             <a class="nav-link waves-effect" href="{% url 'account_login' %}">

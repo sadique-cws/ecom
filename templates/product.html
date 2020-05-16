@@ -2,8 +2,8 @@
 {% load cart_template_tags %}
 {% block content %}
 
-  <main class="mt-5 pt-4">
-    <div class="container dark-grey-text mt-5">
+  <main class="mt-4 pt-0">
+    <div class="container dark-grey-text">
 
       <div class="row wow fadeIn">
         <div class="col-md-6 mb-4">
@@ -17,26 +17,27 @@
                 <span class="badge purple mr-1">{{ object.get_category_display }}</span>
               </a>
             </div>
-
-            <p class="lead">
-
-
-                  {% if item.discount_price %}
+            <h2 class="text-capitalize">{{ object.title }} </h2>
+            <small class="small text-muted mb-2 text-capitalize">{{ object.brand }}</small>
+              <p class="lead">
+                      {% if object.discount_price %}
                       <span class="mr-1">
-                        <del>{{ object.price }}</del>
+                        <del>₹{{ object.price }}</del>
                       </span>
-                      <span>{{ object.discount_price }}</span>
+                      <span>₹{{ object.discount_price }}</span>
                   {% else %}
-                      <span>{{ object.price }}</span>
+                      <span>₹{{ object.price }}</span>
                   {% endif %}
             </p>
+
+
+
+
+
 
             <p class="lead font-weight-bold">Description</p>
 
             <p>{{ object.description }}</p>
-
-
-
 
             {% if request.user|Item_Is_Exit:request.resolver_match.kwargs.slug %}
                 <a href="{% url 'core:order-summary' %}" class="btn btn-success btn-md my-0 p">View cart
@@ -46,11 +47,25 @@
                     <i class="fas fa-shopping-cart ml-1"></i>
                   </a>
                 {% else %}
-                <a href="{{ object.get_add_to_cart_url }}" class="btn btn-primary btn-md my-0 p">Add to cart
-                <i class="fas fa-shopping-cart ml-1"></i>
-              </a>
+                <form action="{{ object.get_add_to_cart_url }}" method="get">
+                {% csrf_token %}
+               <div CLASS="mb-4">
+                {% for foo in object.variation_set.all %}
+                <p class=" mb-0 lead font-weight-bold">{{ foo.name }}</p>
+                {% for val in foo.itemvariation_set.all  %}
+                    <div class="custom-control custom-radio custom-control-inline">
+                      <input type="radio" class="custom-control-input" value="{{ val.value }}" id="{{ foo.name }}{{ val.value }}" name="{{ foo.name }}" required>
+                      <label class="custom-control-label" for="{{ foo.name }}{{ val.value }}">{{ val.value }}</label>
+                    </div>
+                    {% endfor %}
+                 {% endfor %}
+               </div>
+                    <button type="submit" class="btn btn-primary btn-md my-0 p">Add to Cart</button>
+                  </form>
+
             {% endif %}
-            </div>
+</div>
+
         </div>
       </div>
       <hr>
@@ -66,19 +81,21 @@
             quibusdam officia. Neque quibusdam quas a quis porro? Molestias illo neque eum in laborum.</p>
         </div>
       </div>
+ </div>
 
-    <div class="row">
+  <div class="container-fluid">
+       <div class="row">
          <div class="col-lg-12 "> <h4 class="my-4 h4 text-center">Related Products</h4></div>
     </div>
 
       <div class="row wow fadeIn">
 
             {% for item in item %}
-          <div class="col-lg-3 col-md-6 mb-4">
+          <div class="col-lg-2 col-md-6 mb-4">
 
-              <div class="card">
+              <div class="card shadow-sm">
               <div class="view overlay">
-                <img src="{{ item.image.url }}" class="card-img-top" alt="{{ item.title }}-image" height="200px">
+                <img src="{{ item.image.url }}" class="card-img-top card-img-design" alt="{{ item.title }}-image">
                 <a href="{{ item.get_absolute_url }}">
                   <div class="mask rgba-white-slight"></div>
                 </a>
@@ -88,24 +105,21 @@
                 <a href="" class="grey-text">
                   <h5>{{ item.get_category_display }}</h5>
                 </a>
-                <h5>
-                  <strong>
-                    <a href="{{ item.get_absolute_url }}" class="dark-grey-text">{{ item.title }}</a>
-                  </strong>
-                </h5>
+                <h6 class="text-truncate">
+                  <a href="{{ item.get_absolute_url }}" class="dark-grey-text ">{{ item.title }}</a>
+                </h6>
 
-                <h4 class="font-weight-bold blue-text">
-                  <strong>
-                      {% if item.discount_price %}
-                      <span class="mr-1">
+                    <h4 class="h6">
+                     {% if item.discount_price %}
+                      <span class="mr-1 small grey-text">
                         ₹<del>{{ item.price }}</del>
                       </span>
-                      ₹<span>{{ item.discount_price }}</span>
+                      <span class=" font-weight-bold blue-text">₹{{ item.discount_price }}</span>
                   {% else %}
-                      ₹<span>{{ item.price }}</span>
+                      <span class=" font-weight-bold blue-text">₹{{ item.price }}</span>
                   {% endif %}
-                  </strong>
                 </h4>
+
 
               </div>
             </div>
@@ -115,7 +129,8 @@
 
         </div>
 
-    </div>
+  </div>
+
   </main>
 
 {% endblock %}
