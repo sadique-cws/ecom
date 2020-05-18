@@ -17,15 +17,13 @@ class OrderAdmin(admin.ModelAdmin):
                     'received',
                     'refund_requested',
                     'refund_granted',
-                    'shipping_address',
-                    'billing_address',
+                    'address',
                     'payment',
                     'coupon'
                     ]
     list_display_links = [
         'user',
-        'shipping_address',
-        'billing_address',
+        'address',
         'payment',
         'coupon'
     ]
@@ -45,14 +43,12 @@ class AddressAdmin(admin.ModelAdmin):
     list_display = [
         'user',
         'street_address',
-        'apartment_address',
-        'country',
-        'zip',
+        'locality',
+        'city',
+        'state',
         'address_type',
         'default'
     ]
-    list_filter = ['default', 'address_type', 'country']
-    search_fields = ['user', 'street_address', 'apartment_address', 'zip']
 
 
 

@@ -19,5 +19,4 @@ def Item_Is_Exit(user,slug):
         qs = OrderItem.objects.filter(user=user,ordered=False,item__slug=slug)
         if qs.exists():
             return True
-
     return False

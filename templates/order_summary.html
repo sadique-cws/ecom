@@ -4,97 +4,96 @@
   <main>
     <div class="container mt-5">
 
- <div class="table-responsive text-nowrap">
 
-     <h2>Order Summary</h2>
-  <table class="table">
-    <thead>
-      <tr>
-        <th scope="col">#</th>
-        <th scope="col">Item Title</th>
-        <th scope="col">Price</th>
-        <th scope="col">Qty</th>
-        <th scope="col">Total Item Price</th>
+     <h2>My Carts</h2>
 
-      </tr>
-    </thead>
-    <tbody>
-    {% for order_item in object.items.all %}
+ <div class="row">
+     <div class="col-lg-8">
+             {% for order_item in object.items.all %}
+         <div class="media d-block d-md-flex mt-4">
+                <img class="d-block mb-3 mx-auto media-image shadow-sm" width="140px" src="{{ order_item.item.image.url }}"   alt="{{ order_item.item.title }}">
+              <div class="media-body text-center text-md-left ml-md-3 ml-0">
+                <h5 class="mt-0 font-weight-bold">{{ order_item.item.title }}</h5>
+                  <span class="d-block">
+                      {% if order_item.item_variations.exists %}
+                         {% for foo in order_item.item_variations.all %}
+                              <small class="text-muted">{{ foo.variation.name }}: {{ foo.value }}</small>
+                          {% endfor %}
+                      {% endif %}
+                  </span>
+              <span class="d-inline-block my-2">
+                  {% if order_item.item.discount_price %}
+                           <p class="text-dark h5 font-weight-bold d-inline">₹{{ order_item.get_total_discount_price }}</p>
+                       <del class="text-muted small mx-1">₹{{ order_item.get_total_price }}</del>
+                      <span class="text-success font-weight-bold small mx-1">Saving ₹{{ order_item.get_amount_saved }} ({{ order_item.total_discount_percentage_price }}%)</span>
+                    {% else %}
+                        <p class="text-dark font-weight-bold">₹{{ order_item.get_total_price }}</p>
+                    {% endif %}
 
-      <tr>
-      <th>{{ forloop.counter }}</th>
-        <th scope="row">{{ order_item.item.title }}
-        {% if order_item.item_variations.exists %}
-             ( {% for foo in order_item.item_variations.all %}
-                  <small class="text-muted">{{ foo.variation.name }}: {{ foo.value }}</small>
-              {% endfor %}
-            )
+                  </span>
 
-        {% endif %}
-        </th>
-        <td> {% if order_item.item.discount_price %}
-                ₹<del class="text-muted">{{ order_item.item.price }}</del>
-            <p class="text-dark font-weight-bold d-inline ml-1">₹{{ order_item.item.discount_price }}</p>
-        {% else %}
-            <p class="text-dark font-weight-bold">₹{{ order_item.item.price }}</p>
-        {% endif %}</td>
-        <td>
-            <a href="{% url 'core:remove-single-item-from-cart' order_item.item.slug %}" class="badge badge-danger p-2">
-                 <i class="fas fa-minus"></i>
-            </a>
-            {{ order_item.qty }}
-            <a href="{% url 'core:add-to-cart' order_item.item.slug %}" class="badge badge-success p-2">
-            <i class="fas fa-plus"></i>
-            </a>
-        </td>
-        <td>
-            {% if order_item.item.discount_price %}
-                    ₹{{ order_item.get_total_discount_price }}
-                <span class="badge badge-success">Saving ₹{{ order_item.get_amount_saved }}</span>
-            {% else %}
-                    ₹{{ order_item.get_total_price }}
-            {% endif %}
-         <a href="{% url 'core:remove-from-cart' order_item.item.slug %}" class="badge badge-danger p-2 float-right"><i class="fas fa-trash"></i></a>
-        </td>
 
-      </tr>
-        {% empty %}
-        <tr>
-            <td>Your cart is empty</td>
-         <td colspan="5">
+
+
+              </div>
+
+         </div>
+
+                  <div class="d-inline-block ml-4 float-left">
+                  <a href="{% url 'core:remove-single-item-from-cart' order_item.item.slug %}" class=" badge badge-light p-2">
+                             <i class="fas fa-minus"></i>
+                        </a>
+                        <span class="p-2">{{ order_item.qty }}</span>
+                        <a href="{% url 'core:add-to-cart' order_item.item.slug %}" class="badge badge-light p-2">
+                        <i class="fas fa-plus"></i>
+                        </a>
+                  </div>
+                 <div class="d-inline-block float-right">
+                   <a href="{% url 'core:remove-from-cart' order_item.item.slug %}" class="btn btn-danger btn-sm mt-n3"><i class="fas fa-trash"></i> Remove</a>
+                 </div>
+                 <div class="clearfix"></div>
+                 <hr>
+
+  {% empty %}
+            Your cart is empty
             <a href="{% url 'core:homepage' %}" class="btn btn-primary float-right ">Continue Shopping</a>
-        </td>
-        </tr>
+
 
       {% endfor %}
-    {% if object.coupon %}
+
+
+      {% if object.coupon %}
         <tr>
         <th colspan="4">Coupon</th>
         <th>{{ object.coupon.amount }}</th>
     </tr>
     {% endif %}
-    {% if object.get_total %}
+ </div>
+    <div class="col-lg-4">
 
+            <div class="card shadow-sm sticky-top" style="top:60px!important;">
+                <div class="card-header">Price Details</div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+{% if object.get_total %}
+        <li class="list-group-item list-group-item-action">Items () <span class="float-right">₹{{ object.get_total }}</span></li>
+        <li class="list-group-item list-group-item-action">Delivery Charge <span class="float-right">₹0</span></li>
+        <li class="list-group-item list-group-item-action">Order Total  <span class="float-right">₹{{ object.get_total }}</span></li>
 
-    <tr>
-        <th colspan="4" class="font-weight-bold">Order Total</th>
-        <th class="lead font-weight-bold">₹{{ object.get_total }}</th>
-    </tr>
-    <tr>
-        <td colspan="5">
             <a href="{% url 'core:checkout' %}" class="btn btn-warning float-right ml-2">Proceed to Checkout</a>
             <a href="{% url 'core:homepage' %}" class="btn btn-primary float-right ">Continue Shopping</a>
         </td>
     </tr>
 
     {% endif %}
+</ul>
+                </div>
+            </div>
 
-    </tbody>
-  </table>
-
-</div>
 
     </div>
+</div>
+     </div>
   </main>
 
 

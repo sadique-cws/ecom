@@ -1,7 +1,6 @@
 from django.db import models
 from django.conf import settings
 from django.shortcuts import reverse
-from django_countries.fields import CountryField
 
 
 
@@ -13,6 +12,14 @@ LABEL_CHOICE = (
 ADDRESS_CHOICES = (
     ('B', 'Billing'),
     ('S', 'Shipping'),
+)
+
+STATE_CHOICES = (
+    ('BR', 'BIHAR'),
+    ('WB', 'WEST BENGAL'),
+)
+CITY_CHOICES = (
+    ('PUR', 'PURNEA'),
 )
 
 
@@ -127,14 +134,16 @@ class OrderItem(models.Model):
         else:
             return self.get_total_price()
 
+    def total_discount_percentage_price(self):
+        return int(100-(self.item.discount_price/self.item.price)*100)
+
 class Order(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     ref_code = models.CharField(max_length=200)
     items = models.ManyToManyField(OrderItem)
     start_date = models.DateTimeField(auto_now_add=True)
     ordered_date = models.DateTimeField()
-    shipping_address = models.ForeignKey('Address',related_name="shipping_address",on_delete=models.SET_NULL,blank=True,null=True)
-    billing_address = models.ForeignKey('Address',related_name="billing_address",on_delete=models.SET_NULL,blank=True,null=True)
+    address = models.ForeignKey('Address',related_name="shipping_address",on_delete=models.SET_NULL,blank=True,null=True)
     payment = models.ForeignKey('Payment',on_delete=models.SET_NULL,blank=True,null=True)
     ordered = models.BooleanField(default=False)
     coupon = models.ForeignKey('Coupon',on_delete=models.SET_NULL,blank=True,null=True)
@@ -156,10 +165,15 @@ class Order(models.Model):
 
 class Address(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    street_address = models.CharField(max_length=100)
-    apartment_address = models.CharField(max_length=100)
-    country = CountryField(multiple=False)
-    zip = models.CharField(max_length=100)
+    name = models.CharField(max_length=200)
+    contact = models.IntegerField()
+    pincode = models.IntegerField()
+    locality = models.CharField(max_length=400)
+    street_address = models.TextField(max_length=200)
+    city = models.CharField(max_length=200,choices=CITY_CHOICES)
+    state = models.CharField(max_length=200,choices=STATE_CHOICES)
+    landmarks = models.CharField(max_length=200,blank=True,null=True)
+    alternative_no = models.IntegerField(blank=True,null=True)
     address_type = models.CharField(max_length=1,choices=ADDRESS_CHOICES)
     default = models.BooleanField(default=False)
 

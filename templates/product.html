@@ -47,9 +47,10 @@
                     <i class="fas fa-shopping-cart ml-1"></i>
                   </a>
                 {% else %}
+
                 <form action="{{ object.get_add_to_cart_url }}" method="get">
                 {% csrf_token %}
-               <div CLASS="mb-4">
+               <div class="mb-4">
                 {% for foo in object.variation_set.all %}
                 <p class=" mb-0 lead font-weight-bold">{{ foo.name }}</p>
                 {% for val in foo.itemvariation_set.all  %}
